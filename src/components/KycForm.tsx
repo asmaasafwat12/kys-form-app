@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Box, Typography, Stepper, Step, StepLabel, Snackbar, Alert } from "@mui/material";
+import { Button, Box, Typography, Stepper, Step, StepLabel, Snackbar, Alert, Grid } from "@mui/material";
 import { renderField } from "../utils/renderField";
 import { DEFAULT_FORM_SCHEMA } from "../constants/formSchema";
 import { buildZodSchema } from "../utils/buildZodSchema";
@@ -48,51 +48,58 @@ const KycForm = () => {
     };
 
     return (
-        <Box sx={{ width: "50%", margin: "auto", padding: 4 }}>
-            <Typography variant="h1" align="center" gutterBottom>
-                KYC Form
-            </Typography>
-            <Typography variant="h6" align="center" gutterBottom>
-                Please fill out the form below to complete your KYC process.
-            </Typography>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <Stepper activeStep={currentStep}>
-                    {FORM_STEPS.map((step) => (
-                        <Step key={step.label}>
-                            <StepLabel>{step.label}</StepLabel>
-                        </Step>
+        <Grid container spacing={2} justifyContent="center">
+            <Grid size={12}>
+                <Typography variant="h1" align="center" gutterBottom>
+                    KYC Form
+                </Typography>
+            </Grid>
+            <Grid size={12}>
+                <Typography variant="h6" align="center" gutterBottom>
+                    Please fill out the form below to complete your KYC process.
+                </Typography>
+            </Grid>
+            <Grid container justifyContent="center">
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <Stepper activeStep={currentStep}>
+                        {FORM_STEPS.map((step) => (
+                            <Step key={step.label}>
+                                <StepLabel>{step.label}</StepLabel>
+                            </Step>
+                        ))}
+                    </Stepper>
+                    {/* Render fields for the current step */}
+                    {FORM_STEPS[currentStep].fields.map((field) => (
+                        <Grid key={field.id} size={12}>
+                            {renderField(field, control, register, errors)}
+                        </Grid>
                     ))}
-                </Stepper>
-                {/* Render fields for the current step */}
-                {FORM_STEPS[currentStep].fields.map((field) => (
-                    <React.Fragment key={field.id}>{renderField(field, control, register, errors)}</React.Fragment>
-                ))}
-                {/* Navigation Buttons */}
-                <Box sx={{ mt: 2 }}>
-                    <Button disabled={currentStep === 0} onClick={() => setCurrentStep((prev) => prev - 1)}>
-                        Back
-                    </Button>
+                    {/* Navigation Buttons */}
+                    <Box sx={{ mt: 2 }}>
+                        <Button disabled={currentStep === 0} onClick={() => setCurrentStep((prev) => prev - 1)}>
+                            Back
+                        </Button>
 
-                    <Button
-                        variant="contained"
-                        onClick={() => {
-                            if (currentStep === FORM_STEPS.length - 1) {
-                                handleSubmit(onSubmit, handleFormError)();
-                            } else {
-                                // Check if current step has errors
-                                const stepHasErrors = FORM_STEPS[currentStep].fields.some((field) => errors[field.id]);
-                                if (stepHasErrors) {
-                                    handleFormError();
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                                if (currentStep === FORM_STEPS.length - 1) {
+                                    handleSubmit(onSubmit, handleFormError)();
                                 } else {
-                                    setCurrentStep((prev) => prev + 1);
+                                    // Check if current step has errors
+                                    const stepHasErrors = FORM_STEPS[currentStep].fields.some((field) => errors[field.id]);
+                                    if (stepHasErrors) {
+                                        handleFormError();
+                                    } else {
+                                        setCurrentStep((prev) => prev + 1);
+                                    }
                                 }
-                            }
-                        }}>
-                        {currentStep === FORM_STEPS.length - 1 ? "Submit" : "Next"}
-                    </Button>
-                </Box>
-            </form>
-
+                            }}>
+                            {currentStep === FORM_STEPS.length - 1 ? "Submit" : "Next"}
+                        </Button>
+                    </Box>
+                </form>
+            </Grid>
             {/* Snackbar */}
             <Snackbar
                 open={snackbar.open}
@@ -103,7 +110,7 @@ const KycForm = () => {
                     {snackbar.message}
                 </Alert>
             </Snackbar>
-        </Box>
+        </Grid>
     );
 };
 

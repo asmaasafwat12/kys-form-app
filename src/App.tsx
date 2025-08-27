@@ -21,7 +21,9 @@ const App = () => {
                 </IconButton>
 
                 {/* Form Component */}
-                <KycForm />
+                <Grid size={12}>
+                    <KycForm />
+                </Grid>
             </Grid>
         </ThemeProvider>
     );
